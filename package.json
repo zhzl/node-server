@@ -1,0 +1,23 @@
+{
+  "name": "node-server",
+  "version": "1.0.0",
+  "description": "Game server developed by node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhzl/node-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhzl/node-server/issues"
+  },
+  "homepage": "https://github.com/zhzl/node-server#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
