@@ -112,7 +112,7 @@ function on_client_lost_connect(socket) {
     // 遍历所有的服务模块，通知在这个服务上的这个玩家掉线了
     for (let key in service_modules) {  // key 为 stype
         if (service_modules[key].on_player_disconnect) {
-            service_modules.on_player_disconnect(key, uid);
+            service_modules[key].on_player_disconnect(key, uid);
         }
     }
 }

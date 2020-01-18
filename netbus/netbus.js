@@ -122,7 +122,7 @@ function socket_send_encoded_cmd(cmd) {
     let uid = proto_tools.read_int32(cmd, 4);
     if (socket.is_ws) {
         socket.send(cmd);
-        log.info('回给内部客户端的消息为: stype = ' + stype + ',ctype = ' + ctype + ',uid = ' + uid + ',body = ' + cmd);
+        log.info('回给客户端的消息为: stype = ' + stype + ',ctype = ' + ctype + ',uid = ' + uid + ',body = ' + cmd);
     } else {
         let data = tcppkg.package_data(cmd);
         socket.write(data);

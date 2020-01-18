@@ -144,7 +144,7 @@ let service = {
 	 */
 	on_player_disconnect: function(stype, uid){
         // 由 Auth 服务保存的就由 Auth 清空
-        if (stype === Stype.Auth) {
+        if (parseInt(stype) === Stype.Auth) {
             clear_socket_with_uid(uid);
         }
 
