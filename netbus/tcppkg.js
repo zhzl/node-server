@@ -10,6 +10,7 @@ const tcppkg = {
         let buf = Buffer.allocUnsafe(2 + data.length);
         buf.writeInt16LE(2 + data.length, 0);
         buf.fill(data, 2);
+        return buf;
     }
 }
 

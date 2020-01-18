@@ -88,9 +88,9 @@ function on_socket_recv_cmd(socket, cmd_buf) {
 function socket_close(socket) {
     log.warn('服务器主动关闭了socket', socket.is_ws, socket.socket_key);
     if (socket.is_ws) {
-        socket.end();
-    } else {
         socket.close();
+    } else {
+        socket.end();
     }
 }
 
@@ -122,11 +122,11 @@ function socket_send_encoded_cmd(cmd) {
     let uid = proto_tools.read_int32(cmd, 4);
     if (socket.is_ws) {
         socket.send(cmd);
-        log.info('回给内部客户端的消息为: stype = ' + stype + ',ctype = ' + ctype + ',uid = ' + uid + ',body = ' + data);
+        log.info('回给内部客户端的消息为: stype = ' + stype + ',ctype = ' + ctype + ',uid = ' + uid + ',body = ' + cmd);
     } else {
         let data = tcppkg.package_data(cmd);
         socket.write(data);
-        log.info('回给客户端的消息为: stype = ' + stype + ',ctype = ' + ctype + ',uid = ' + uid + ',body = ' + cmd);
+        log.info('回给客户端的消息为: stype = ' + stype + ',ctype = ' + ctype + ',uid = ' + uid + ',body = ' + data);
     }
 }
 
@@ -168,7 +168,7 @@ function add_client_socket_event_listener(socket, is_encrypt) {
     // 如果设置 hex 编码：hex--> "48656c6c6f576f726c6421"
     socket.on('data', data => {
         // 检验数据合法性
-        if (Buffer.isBuffer(data)) {
+        if (!Buffer.isBuffer(data)) {
             log.error('tcp 协议未收到 Buffer 类型的数据');
             socket_close(socket);
             return;
@@ -191,8 +191,7 @@ function add_client_socket_event_listener(socket, is_encrypt) {
 
         while (last_pkg.length - offset >= pkg_len) {  // 判断是否有完整的包
             // 根据长度信息来读取我们的数据
-            let cmd_buf;
-            cmd_buf = Buffer.allocUnsafe(pkg_len - 2);  // 2个长度信息
+            let cmd_buf = Buffer.allocUnsafe(pkg_len - 2);  // 2个长度信息
             last_pkg.copy(cmd_buf, 0, offset + 2, offset + pkg_len);
             on_socket_recv_cmd(socket, cmd_buf);
 
@@ -201,9 +200,9 @@ function add_client_socket_event_listener(socket, is_encrypt) {
                 break;
             }
 
-            let pkg_len = tcppkg.read_package_size(last_pkg, offset);
+            pkg_len = tcppkg.read_package_size(last_pkg, offset);
             if (pkg_len < 0) {
-                return;
+                break;
             }
         }
 
@@ -340,7 +339,7 @@ function connect_tcp_server(stype, host, port, is_encrypt) {
                 break;
             }
 
-            let pkg_len = tcppkg.read_package_size(last_pkg, offset);
+            pkg_len = tcppkg.read_package_size(last_pkg, offset);
             if (pkg_len < 0) {
                 return;
             }
@@ -376,7 +375,7 @@ function connect_tcp_server(stype, host, port, is_encrypt) {
 
 // 收到服务器返回的消息
 function on_recv_cmd_server_return(socket, cmd_buf) {
-    let result = service_manager.on_recv_cmd_server_return(socket, cmd_buf);
+    let result = service_manager.on_recv_server_return(socket, cmd_buf);
     if (!result) {
         log.error('解码失败');
         socket_close(socket);
@@ -401,7 +400,7 @@ function on_socket_connected(stype, socket, is_ws, is_encrypt) {
     socket.send_encoded_cmd = socket_send_encoded_cmd;
 
     // 保存用户到 socket 列表
-    global_socket_list[stype] = socket;
+    server_connect_list[stype] = socket;
     socket.socket_key = stype;
 }
 

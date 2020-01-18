@@ -227,10 +227,11 @@ function encode_str_cmd(stype, ctype, str) {
     let cmd_buf = alloc_buffer(total_len);
     write_cmd_header_inbuf(cmd_buf, stype, ctype);
     write_str_inbuf(cmd_buf, proto_tools.header_size, str, byte_len);
+    return cmd_buf;
 }
 
 function write_utag_inbuf(cmd_buf, utag) {
-    write_uint32(cmd, 4, utag);
+    write_uint32(cmd_buf, 4, utag);
 }
 
 function write_prototype_inbuf(cmd_buf, proto_type){

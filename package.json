@@ -19,6 +19,8 @@
   "homepage": "https://github.com/zhzl/node-server#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "mysql": "^2.17.1",
+    "redis": "^2.8.0",
     "ws": "^7.2.1"
   }
 }
